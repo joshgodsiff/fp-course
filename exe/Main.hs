@@ -1,3 +1,3 @@
-import Course.Scratch
+import Course.ChatBot
 
-main = helloWorld
+main = chatBotMain commandParser
