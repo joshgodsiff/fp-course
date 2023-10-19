@@ -1,1 +1,3 @@
-main = print "Welcome to the Seek Haskell Course, 2023!"
+import Course.Scratch
+
+main = helloWorld
