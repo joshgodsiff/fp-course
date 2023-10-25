@@ -3,11 +3,14 @@
 
 module Course.Validation where
 
-import qualified Prelude as P(String)
+import qualified Prelude as P(String, (>>=))
+
 import Course.Core
 
 -- $setup
 -- >>> import Test.QuickCheck
+-- >>> import Data.String
+-- >>> propEvaluation p = quickCheckWithResult stdArgs p P.>>= error . output
 -- >>> import qualified Prelude as P(fmap, either)
 -- >>> instance Arbitrary a => Arbitrary (Validation a) where arbitrary = P.fmap (P.either Error Value) arbitrary
 data Validation a = Error Err | Value a
@@ -24,6 +27,7 @@ type Err = P.String
 -- False
 --
 -- prop> \x -> isError x /= isValue x
+-- +++ OK, passed 100 tests.
 isError :: Validation a -> Bool
 isError (Error _) = True
 isError (Value _) = False
@@ -90,7 +94,7 @@ valueOr (Value a) _ = a
 -- >>> errorOr (Value 7) "q"
 -- "q"
 --
--- prop> \x -> isError x || errorOr x e == e
+-- prop> \x e -> isError x || errorOr x e == e
 errorOr :: Validation a -> Err -> Err
 errorOr (Error e) _ = e
 errorOr (Value _) a = a

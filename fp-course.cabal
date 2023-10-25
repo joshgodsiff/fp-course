@@ -34,6 +34,7 @@ library
   build-depends:      base >= 4 && < 5
                     , containers >= 0.5 && < 0.7
                     , time >= 1.8 && < 1.10
+                    , QuickCheck >= 2.14 && < 2.15
 
   ghc-options:        -Wall
                       -fwarn-incomplete-uni-patterns
@@ -80,6 +81,7 @@ library
                       Course.Scratch
                       Course.State
                       Course.StateT
+                      Course.Syntax
                       Course.Traversable
                       Course.Validation
                       Test.ApplicativeTest
@@ -101,6 +103,9 @@ library
                       Test.StateTest
                       Test.TraversableTest
                       Test.ValidationTest
+                      Test.AlternativeTest
+                      Test.ComposeTest
+                      Test.ContravariantTest
 
 executable fp-course
     -- Import common warning flags.
