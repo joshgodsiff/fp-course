@@ -1,3 +1,4 @@
 import Course.ChatBot
 
-main = chatBotMain commandParser
+main :: IO ()
+main = chatBotMain

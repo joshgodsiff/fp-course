@@ -3,9 +3,7 @@
 module Course.ChatBot where
 
 import Data.String (fromString)
-
-helloWorld :: IO ()
-helloWorld = print "Hello World!"
+import Data.List (isPrefixOf)
 
 data Command 
     = Start
@@ -15,11 +13,11 @@ data Command
     deriving (Show, Eq)
 
 commandParser :: String -> Maybe Command
-commandParser "/start" = Just (Command Start)
-commandParser "/stop"  = Just (Command Stop)
-commandParser "/info"  = Just (Command Info)
+commandParser "/start" = Just Start
+commandParser "/stop"  = Just Stop
+commandParser "/info"  = Just Info
 commandParser str
-    | "/input " `isPrefixOf` str = Just (Command (UserInput (drop 7 str)))
+    | "/input " `isPrefixOf` str = Just (UserInput (drop 7 str))
     | otherwise                 = Nothing
 
 -- data RulesEngine = RulesEngine
@@ -34,13 +32,29 @@ commandParser str
 
 chatBotMain :: IO ()
 chatBotMain = do
+    header
+    runChatBot
+
+runChatBot :: IO ()
+runChatBot = do
     putStrLn "Enter command:"
     line <- getLine
-    case parse commandParser line of
-        Just (Command Stop) -> putStrLn "Stopping bot..."
+    case commandParser line of
+        Just Stop -> putStrLn "Stopping bot..."
         Just cmd -> do
             putStrLn $ "Parsed command: " ++ show cmd
-            chatBotMain commandParser
+            runChatBot
         Nothing -> do
             putStrLn "Unknown command."
-            chatBotMain commandParser
+            runChatBot
+
+
+header :: IO ()
+header = do
+    putStrLn $ unlines
+        [ "╔════════════════════════╗"
+        , "║                        ║"
+        , "║  Fancy ChatBot v0.1.0  ║"
+        , "║                        ║"
+        , "╚════════════════════════╝"
+        ]

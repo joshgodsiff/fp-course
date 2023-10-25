@@ -57,6 +57,7 @@ library
                       Course.Anagrams
                       Course.Applicative
                       Course.Cheque
+                      Course.ChatBot
                       Course.Comonad
                       Course.Compose
                       Course.Contravariant
