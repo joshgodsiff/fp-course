@@ -2,6 +2,7 @@
 
 module Course.ChatBot where
 
+import System.IO (hFlush, stdout)
 import Data.String (fromString)
 import Data.List (isPrefixOf)
 
@@ -14,11 +15,13 @@ data Command
 
 commandParser :: String -> Maybe Command
 commandParser "/start" = Just Start
-commandParser "/stop"  = Just Stop
 commandParser "/info"  = Just Info
-commandParser str
-    | "/input " `isPrefixOf` str = Just (UserInput (drop 7 str))
-    | otherwise                 = Nothing
+commandParser cmd
+    | cmd `elem` ["/stop", "/exit", "/quit"] = Just Stop
+    | cmd == "/info"                         = Just Info
+    | "/input" `isPrefixOf` cmd              = Just (UserInput (drop 7 cmd)) 
+    | otherwise                              = Nothing
+
 
 -- data RulesEngine = RulesEngine
 --     { rules :: [Command -> Maybe String]
@@ -37,7 +40,8 @@ chatBotMain = do
 
 runChatBot :: IO ()
 runChatBot = do
-    putStrLn "Enter command:"
+    putStr "> "
+    hFlush stdout
     line <- getLine
     case commandParser line of
         Just Stop -> putStrLn "Stopping bot..."
@@ -47,7 +51,6 @@ runChatBot = do
         Nothing -> do
             putStrLn "Unknown command."
             runChatBot
-
 
 header :: IO ()
 header = do
