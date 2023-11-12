@@ -24,10 +24,13 @@ import qualified Numeric as N
 
 
 -- $setup
+-- >>> import Data.String
 -- >>> import Test.QuickCheck
+-- >>> import Test.propEvaluation
 -- >>> import Course.Core(even, id, const)
 -- >>> import qualified Prelude as P(fmap, foldr)
 -- >>> instance Arbitrary a => Arbitrary (List a) where arbitrary = P.fmap ((P.foldr (:.) Nil) :: ([a] -> List a)) arbitrary
+-- parse error on input `Test.propEvaluation'
 
 -- BEGIN Helper functions and data types
 
@@ -70,8 +73,10 @@ foldLeft f b (h :. t) = let b' = f b h in b' `seq` foldLeft f b' t
 -- 3
 --
 -- prop> \x -> x `headOr` infinity == 0
+-- Not in scope: type constructor or class `String'
 --
 -- prop> \x -> x `headOr` Nil == x
+-- Not in scope: type constructor or class `String'
 headOr :: a -> List a -> a
 headOr _ (b :. _) = b
 headOr a Nil = a 
@@ -102,11 +107,14 @@ product (a :. b) = a * product b
 -- 10
 --
 -- prop> \x -> foldLeft (-) (sum x) x == 0
+-- WAS Not in scope: type constructor or class `String'
+-- NOW Variable not in scope:
+-- NOW   propEvaluation :: (List Int -> Bool) -> IO String
 sum ::
   List Int
   -> Int
-sum =
-  error "todo: Course.List#sum"
+sum Nil = 0
+sum (a :. b) = a + sum b
 
 -- | Return the length of the list.
 --
@@ -114,11 +122,12 @@ sum =
 -- 3
 --
 -- prop> \x -> sum (map (const 1) x) == length x
+-- Not in scope: type constructor or class `String'
 length ::
   List a
   -> Int
-length =
-  error "todo: Course.List#length"
+length Nil = 0
+length (_ :. b) = 1 + length b
 
 -- | Map the given function on each element of the list.
 --
@@ -126,14 +135,20 @@ length =
 -- [11,12,13]
 --
 -- prop> \x -> headOr x (map (+1) infinity) == 1
+-- WAS Not in scope: type constructor or class `String'
+-- NOW Variable not in scope:
+-- NOW   propEvaluation :: (Integer -> Bool) -> IO String
 --
 -- prop> \x -> map id x == x
+-- WAS Not in scope: type constructor or class `String'
+-- NOW Variable not in scope:
+-- NOW   propEvaluation :: (List b0_a3zfJ[tau:1] -> Bool) -> IO String
 map ::
   (a -> b)
   -> List a
   -> List b
-map =
-  error "todo: Course.List#map"
+map _ Nil = Nil
+map f (x :. ys) = f x :. map f ys
 
 -- | Return elements satisfying the given predicate.
 --
@@ -141,35 +156,47 @@ map =
 -- [2,4]
 --
 -- prop> \x -> headOr x (filter (const True) infinity) == 0
+-- Not in scope: type constructor or class `String'
 --
 -- prop> \x -> filter (const True) x == x
+-- Not in scope: type constructor or class `String'
 --
 -- prop> \x -> filter (const False) x == Nil
+-- Not in scope: type constructor or class `String'
 filter ::
   (a -> Bool)
   -> List a
   -> List a
-filter =
-  error "todo: Course.List#filter"
+filter _ Nil = Nil
+filter f (x :. ys) = if f x then x :. filter f ys else filter f ys
 
 -- | Append two lists to a new list.
 --
 -- >>> (1 :. 2 :. 3 :. Nil) ++ (4 :. 5 :. 6 :. Nil)
 -- [1,2,3,4,5,6]
 --
--- prop> \x -> headOr x (Nil ++ infinity) == 0
+
+-- \x -> headOr x (Nil ++ infinity) 
 --
 -- prop> \x -> headOr x (y ++ infinity) == headOr 0 y
+-- Variable not in scope: y :: List Integer
+-- Variable not in scope: y :: List Integer
 --
 -- prop> \x -> (x ++ y) ++ z == x ++ (y ++ z)
+-- Variable not in scope: y :: List a_a4V9j[sk:1]
+-- Variable not in scope: z :: List a_a4V9j[sk:1]
+-- Variable not in scope: y :: List a_a4V9j[sk:1]
+-- Variable not in scope: z :: List a_a4V9j[sk:1]
 --
 -- prop> \x -> x ++ Nil == x
+-- Variable not in scope:
+--   propEvaluation :: (List a0_a4Vdm[tau:1] -> Bool) -> IO String
 (++) ::
   List a
   -> List a
   -> List a
-(++) =
-  error "todo: Course.List#(++)"
+(++) Nil y = y
+(++) (x :. xs) y = x :. ( xs ++ y)
 
 infixr 5 ++
 
