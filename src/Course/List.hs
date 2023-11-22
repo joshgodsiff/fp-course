@@ -95,8 +95,7 @@ headOr a Nil = a
 product ::
   List Int
   -> Int
-product Nil = 1
-product (a :. b) = a * product b
+product = foldRight (*) 1
 
 -- | Sum the elements of the list.
 --
@@ -113,8 +112,7 @@ product (a :. b) = a * product b
 sum ::
   List Int
   -> Int
-sum Nil = 0
-sum (a :. b) = a + sum b
+sum = foldRight (+) 0
 
 -- | Return the length of the list.
 --
@@ -122,12 +120,13 @@ sum (a :. b) = a + sum b
 -- 3
 --
 -- prop> \x -> sum (map (const 1) x) == length x
--- Not in scope: type constructor or class `String'
+-- WAS Not in scope: type constructor or class `String'
+-- NOW Variable not in scope:
+-- NOW   propEvaluation :: (List a0_a1zDu[tau:1] -> Bool) -> IO String
 length ::
   List a
   -> Int
-length Nil = 0
-length (_ :. b) = 1 + length b
+length = foldRight (const(+1)) 0
 
 -- | Map the given function on each element of the list.
 --
@@ -147,10 +146,14 @@ map ::
   (a -> b)
   -> List a
   -> List b
-map _ Nil = Nil
-map f (x :. ys) = f x :. map f ys
+-- map _ Nil = Nil
+-- map f (x :. ys) = f x :. map f ys
 
+map f = foldRight (\x y -> f x :. y) Nil
 -- | Return elements satisfying the given predicate.
+ -- (1 :. 2 :. Nil)  => Nil
+ -- (2 :. Nil) => 11 :. Nil
+ -- (Nil) => 12 :. 11 :. Nil
 --
 -- >>> filter even (1 :. 2 :. 3 :. 4 :. 5 :. Nil)
 -- [2,4]
@@ -167,8 +170,8 @@ filter ::
   (a -> Bool)
   -> List a
   -> List a
-filter _ Nil = Nil
-filter f (x :. ys) = if f x then x :. filter f ys else filter f ys
+-- filter _ Nil = Nil
+filter f = foldRight (\x y -> if f x then x :. y else y) Nil 
 
 -- | Append two lists to a new list.
 --
