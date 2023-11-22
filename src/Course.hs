@@ -7,6 +7,7 @@ import Course.Alternative as X
 import Course.Anagrams as X
 import Course.Applicative as X
 import Course.Cheque as X
+import Course.ChatBot as X
 import Course.Comonad as X
 import Course.Compose as X
 import Course.Contravariant as X
