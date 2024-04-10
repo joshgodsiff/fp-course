@@ -77,6 +77,7 @@ library
                       Course.Optional
                       Course.Parser
                       Course.Person
+                      Course.Probability
                       Course.Scratch
                       Course.State
                       Course.StateT
